@@ -2,5 +2,32 @@
 name = "zyphyr"
 version = "0.1.0"
 edition = "2024"
+authors = ["Vivek Jmai <j.vivekvamsi@gmail.com>"]
+description = "High-performance vector database with HNSW indexing"
+repository = "https://github.com/vivekjami/zyphyr"
+license = "MIT"
+
 
 [dependencies]
+# We'll add dependencies as we need them
+
+[dev-dependencies]
+criterion = "0.5"  # For benchmarking
+proptest = "1.0"   # For property-based testing
+
+[profile.release]
+# Optimize for performance
+opt-level = 3
+lto = true
+codegen-units = 1
+panic = "abort"
+
+[profile.bench]
+# Benchmarking optimizations
+opt-level = 3
+debug = false
+lto = true
+
+[[bench]]
+name = "vector_benchmarks"
+harness = false
