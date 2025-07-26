@@ -54,7 +54,7 @@ let results = db.search(&query_vector, 10)?;
 **Phase 1: Core Engine** (4 weeks)
 - [x] Project architecture and design
 - [x] Development environment setup
-- [ ] Core vector data structures
+- [x] Core vector data structures
 - [ ] HNSW algorithm implementation
 - [ ] Distance calculation optimizations
 - [ ] Memory-mapped storage layer

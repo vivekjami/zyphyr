@@ -9,25 +9,14 @@ license = "MIT"
 
 
 [dependencies]
-# We'll add dependencies as we need them
+thiserror = "2.0.12" # For error handling
+memmap2 = "0.9.7"  # For memory-mapped files (future use)
+serde = { version = "1.0", features = ["derive"], optional = true } # For serialization (optional for now)
 
 [dev-dependencies]
-criterion = "0.5"  # For benchmarking
-proptest = "1.0"   # For property-based testing
-
-[profile.release]
-# Optimize for performance
-opt-level = 3
-lto = true
-codegen-units = 1
-panic = "abort"
-
-[profile.bench]
-# Benchmarking optimizations
-opt-level = 3
-debug = false
-lto = true
+criterion = "0.7.0" # For benchmarking
+rand = "0.9.2"     # For test data generation
 
 [[bench]]
-name = "vector_benchmarks"
+name = "vector_bench"
 harness = false
