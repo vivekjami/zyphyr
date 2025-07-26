@@ -18,11 +18,20 @@ impl DistanceMetric {
         match self {
             DistanceMetric::Euclidean => Ok(euclidean_distance(a.data(), b.data())),
             DistanceMetric::Cosine => {
-                let mut a = a.clone();
-                let mut b = b.clone();
-                a.normalize();
-                b.normalize();
-                Ok(1.0 - dot_product(a.data(), b.data()))
+                // Calculate cosine similarity directly without modifying original vectors
+                let a_data = a.data();
+                let b_data = b.data();
+                
+                let dot = a_data.iter().zip(b_data.iter()).map(|(x, y)| x * y).sum::<f32>();
+                let a_mag = a_data.iter().map(|x| x * x).sum::<f32>().sqrt();
+                let b_mag = b_data.iter().map(|x| x * x).sum::<f32>().sqrt();
+                
+                // Check for zero magnitude
+                if a_mag == 0.0 || b_mag == 0.0 {
+                    Ok(1.0) // Maximum distance for zero vectors
+                } else {
+                    Ok(1.0 - (dot / (a_mag * b_mag)))
+                }
             }
             DistanceMetric::DotProduct => Ok(dot_product(a.data(), b.data())),
         }

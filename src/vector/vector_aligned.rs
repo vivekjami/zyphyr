@@ -1,12 +1,13 @@
 use crate::ZyphyrError;
 use crate::utils::alignment::{SIMD_ALIGNMENT, is_aligned, pad_dimension, get_simd_width};
 use std::mem;
+use aligned_vec::AlignedVec;
 
 #[repr(C, align(32))]  // Increased alignment for AVX-512
 #[derive(Debug, Clone)]
 pub struct Vector {
     id: String,            // Unique identifier
-    data: Box<[f32]>,      // Aligned vector data
+    data: AlignedVec<f32>, // Properly aligned vector data
     dim: usize,            // Original vector dimension
     padded_dim: usize,     // Padded dimension for SIMD operations
     is_normalized: bool,   // Flag for cosine similarity optimization
@@ -23,13 +24,14 @@ impl Vector {
         let simd_width = get_simd_width();
         let padded_dim = pad_dimension(dim, simd_width);
         
-        // Create a padded vector
-        let mut padded_data = vec![0.0f32; padded_dim];
-        padded_data[..dim].copy_from_slice(&data);
+        // Create a properly aligned vector
+        let mut aligned_data = AlignedVec::with_capacity(SIMD_ALIGNMENT, padded_dim);
+        aligned_data.extend_from_slice(&data);
+        aligned_data.resize(padded_dim, 0.0); // Pad with zeros
         
         Ok(Vector {
             id: id.into(),
-            data: padded_data.into_boxed_slice(),
+            data: aligned_data,
             dim,
             padded_dim,
             is_normalized: false,
@@ -46,13 +48,14 @@ impl Vector {
         let simd_width = get_simd_width();
         let padded_dim = pad_dimension(dim, simd_width);
         
-        // Create a padded vector
-        let mut padded_data = vec![0.0f32; padded_dim];
-        padded_data[..dim].copy_from_slice(data);
+        // Create a properly aligned vector
+        let mut aligned_data = AlignedVec::with_capacity(SIMD_ALIGNMENT, padded_dim);
+        aligned_data.extend_from_slice(data);
+        aligned_data.resize(padded_dim, 0.0); // Pad with zeros
         
         Ok(Vector {
             id: id.into(),
-            data: padded_data.into_boxed_slice(),
+            data: aligned_data,
             dim,
             padded_dim,
             is_normalized: false,
